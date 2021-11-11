@@ -232,6 +232,21 @@ export const get_post_by_count = selectorFamily({
     }
 })
 
+export const get_comment_by_count = selectorFamily({
+    key: 'get_post_by_count',
+    get: param => async ({get}) => {
+      try {
+        get(update)
+        const _api = get(pol_api_dev)
+        console.log(_api?.query['socialMedia'])
+        const comment = await _api?.query['socialMedia']['commentsById'](param)
+        return comment?.toHuman()
+        } catch(error) {
+            console.log(error)
+        }
+    }
+})
+
 export const get_post_count = selector({
     key: 'get_post_count',
     get: async ({get}) => {

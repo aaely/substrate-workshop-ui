@@ -1,6 +1,6 @@
 import { Avatar, Box } from '@mui/material'
-import { useRecoilValue, useRecoilState } from 'recoil'
-import { account, posts as p, user as u } from '../Recoil/balanceListener'
+import { useRecoilValue, useRecoilState, useSetRecoilState } from 'recoil'
+import { posts as p, user as u } from '../Recoil/balanceListener'
 import {AiOutlineLike, AiOutlineCaretUp, AiOutlineCaretDown} from 'react-icons/ai'
 import {MdAddComment, MdPostAdd} from 'react-icons/md'
 import {
@@ -12,7 +12,12 @@ import {
 } from '@mui/material'
 import './app.css'
 import Deck from './Deck'
-import { get_comments_for_post, pol_api_dev } from '../Recoil/recoil'
+import { 
+    get_comments_for_post, 
+    pol_api_dev, 
+    get_comment_by_count,
+    update
+} from '../Recoil/recoil'
 import { web3FromSource } from '@polkadot/extension-dapp'
 import { useState } from 'react'
 
@@ -21,6 +26,10 @@ export default function Posts() {
     const user: any = useRecoilValue(u)
     const posts = useRecoilValue(p)
     const api: any = useRecoilValue(pol_api_dev)
+    const comment = useRecoilValue(get_comment_by_count(0))
+    const forceUpdate = useSetRecoilState(update)
+
+    console.log(comment)
 
     async function likePost(postId: number, author: any) {
         try {
@@ -32,6 +41,7 @@ export default function Posts() {
                   console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
                 } else if (result.status.isFinalized) {
                   console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
+                  forceUpdate(Math.random())
                   unsub();
                 }
               })
@@ -49,6 +59,7 @@ export default function Posts() {
                   console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
                 } else if (result.status.isFinalized) {
                   console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
+                  forceUpdate(Math.random())
                   unsub();
                 }
               })
@@ -128,15 +139,15 @@ function PostDetails(props: any) {
                     <AiOutlineLike/> {props.post.likes}
                 </div>
                 <div onClick={() => setShowComments(!showComments)} className='footerItem'>
-                    <MdAddComment/> {props.post.totalComments} {showComments ? <AiOutlineCaretUp/> : <AiOutlineCaretDown/>}
+                    <MdAddComment/> {comments?.length} {showComments ? <AiOutlineCaretUp/> : <AiOutlineCaretDown/>}
                 </div>
             </Box>
             {showComments && 
             <Box className='commentsContainer'>
-                {props.post.comments?.map((comment: any, i: number) => {
+                {comments?.map((comment: any, i: number) => {
                     return(
                         <p key={i}>
-                            {comment.content}
+                            {comment.comment}
                         </p>
                     )
                 })}
