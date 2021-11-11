@@ -1,0 +1,88 @@
+{
+    "Peptide": {
+        "author": "AccountId",
+        "id": "u128",
+        "name": "String",
+        "price": "u32",
+        "inventory": "u32",
+        "imageHash": "String"
+    },
+    "PeptideProfile": {
+        "peptideRef": "u128",
+        "chain": "Vec<AminoAcid>",
+        "productonCost": "u32",
+        "productionYield": "u32"
+    },
+    "AminoAcid": {
+        "id": "u128",
+        "name": "String",
+        "cost": "u32"
+    },
+    "CannabisProduct": {
+        "id": "u128",
+        "name": "String",
+        "price": "u32",
+        "category": "CannabisCategory",
+        "inventory": "u32",
+        "imageHash": "String",
+        "cannabinoids": "Vec<(u128, String, u32)>",
+        "terpenes": "Vec<(u128, String, u32)>"
+    },
+    "CannabisCategory": {
+        "_enum": [
+          "Flower",
+          "CO2Extract",
+          "ButaneExtract"
+        ]
+      },
+    "Cannabinoid": {
+        "id": "u128",
+        "name": "String",
+        "description": "String",
+        "products": "Vec<(u128, u32)>"
+    },
+    "Terpene": {
+        "id": "u128",
+        "name": "String",
+        "description": "String",
+        "products": "Vec<(u128, u32)>"
+    },
+    "User": {
+        "address": "AccountId",
+        "fname": "String",
+        "lname": "String",
+        "phone": "String",
+        "email": "String",
+        "handle": "String",
+        "handleId": "u128",
+        "bio": "String",
+        "website": "String",
+        "profileImage": "String",
+        "total_orders" : "u32"
+    },
+    "Order": {
+        "id": "u128",
+        "user": "AccountId",
+        "products": "Vec<(String, u32, u32)>",
+        "total": "u32",
+        "date": "String"
+    },
+    "Post": {
+        "author": "AccountId",
+        "id": "u128",
+        "likes": "u32",
+        "date": "String",
+        "handleTags": "Vec<u128>",
+        "hashtags": "Vec<u128>",
+        "content": "String",
+        "comments": "Vec<Comments>",
+        "totalComments": "u32",
+        "images": "Vec<String>"
+    },
+    "Comments": {
+        "author": "AccountId",
+        "postId": "u128",
+        "comment": "String",
+        "likes": "u32"
+    }
+}
