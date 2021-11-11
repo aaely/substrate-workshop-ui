@@ -78,10 +78,6 @@ export default function Nav() {
       setVis(true);
     };
 
-  const handleUserHover = () => {
-    setShowUserInfo(!showUserInfo)
-  }
-
   const userInfo = () => {
     return(
       <div onMouseLeave={() => setShowUserInfo(false)}>

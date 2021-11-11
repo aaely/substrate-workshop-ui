@@ -6,9 +6,15 @@ import NewPost from '../Components/NewPost'
 import {MdPostAdd} from 'react-icons/md'
 import Posts from '../Components/Posts'
 import { newPostFlag } from '../Recoil/forms'
-import { user as u } from '../Recoil/balanceListener'
-import { is_user_registered, get_pol_accts, pol_api_dev, get_pol_acct } from '../Recoil/recoil'
+import { balance, user as u } from '../Recoil/balanceListener'
+import { 
+    is_user_registered, 
+    get_pol_accts, 
+    pol_api_dev, 
+    get_pol_acct 
+} from '../Recoil/recoil'
 import UserRegistration from './UserRegistration'
+import { useState } from 'react'
 
 const Landing =() => {
 
@@ -18,9 +24,12 @@ const Landing =() => {
     const registered = useRecoilValue(is_user_registered(user.address))
     const allAccounts = useRecoilValue(get_pol_accts)
     const api = useRecoilValue(pol_api_dev)
+    const [sending, setSending] = useState(false)
+    const bal = useRecoilValue(balance)
 
     const sendAllAlice = async () => {
         try {
+            setSending(true)
             const unsub: any = await api?.tx['balances']['transferAll'](acct, true).signAndSend(allAccounts[0], (result: any) => {
                 console.log(`Current status is ${result.status}, recipient is ${acct}`);
             
@@ -28,6 +37,7 @@ const Landing =() => {
                   console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
                 } else if (result.status.isFinalized) {
                   console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
+                  setSending(false)
                   unsub()
                 }
               })
@@ -52,8 +62,11 @@ const Landing =() => {
 
     return(
         <Box className="container">
-            {!registered &&  <Button variant='contained' color='success' onClick={() => sendAllAlice()}>
+            {!registered && !sending && parseInt(bal?.free) === 0 && <Button variant='contained' color='success' onClick={() => sendAllAlice()}>
                 I need funds Homie!    
+            </Button>}
+            {!registered && sending &&  <Button variant='contained' color='success' onClick={() => sendAllAlice()}>
+                Funds Incoming...
             </Button>}
             {registered && transition((style, i) => {
                 return(
