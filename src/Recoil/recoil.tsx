@@ -445,6 +445,48 @@ export const is_user_registered = selectorFamily({
     }
 })
 
+export const get_user_profile_image = selectorFamily({
+    key: 'get_user_profile_image',
+    get: param => async ({get}) => {
+        try {
+            get(update)
+            const api = get(pol_api_dev)
+            const res: any = await api?.query['users']['profileImageByAccount'](param)
+            return res.toHuman()
+        } catch(error) {
+            console.log(error)
+        }
+    }
+})
+
+export const has_liked_post = selectorFamily({
+    key: 'has_liked_post',
+    get: (param: any) => async ({get}) => {
+        try {
+            get(update)
+            const api = get(pol_api_dev)
+            const res: any = await api?.query['socialMedia']['hasLikedPost'](param.id, param.address)
+            return res.toHuman()
+        } catch(error) {
+            console.log(error)
+        }
+    }
+})
+
+export const has_liked_comment = selectorFamily({
+    key: 'has_liked_post',
+    get: (param: any) => async ({get}) => {
+        try {
+            get(update)
+            const api = get(pol_api_dev)
+            const res: any = await api?.query['socialMedia']['hasLikedComment'](param.id, param.address)
+            return res.toHuman()
+        } catch(error) {
+            console.log(error)
+        }
+    }
+})
+
 export const get_comments_for_post = selectorFamily({
     key: 'get_comments_for_post',
     get: (param: any) => async ({get}: any) => {

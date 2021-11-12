@@ -15,77 +15,35 @@ import Deck from './Deck'
 import { 
     get_comments_for_post, 
     pol_api_dev, 
-    get_comment_by_count,
-    update
+    has_liked_post,
+    get_user_profile_image,
+    update,
+    has_liked_comment,
 } from '../Recoil/recoil'
 import { web3FromSource } from '@polkadot/extension-dapp'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useSpring, animated } from 'react-spring'
 
 export default function Posts() {
 
     const user: any = useRecoilValue(u)
     const posts = useRecoilValue(p)
     const api: any = useRecoilValue(pol_api_dev)
-    const comment = useRecoilValue(get_comment_by_count(0))
-    const forceUpdate = useSetRecoilState(update)
-
-    console.log(comment)
-
-    async function likePost(postId: number, author: any) {
-        try {
-            const injected = await web3FromSource('polkadot-js')
-            const unsub = await api?.tx['socialMedia']['likePost'](postId, author).signAndSend(user.address, {signer: injected.signer}, (result: any) => {
-                console.log(`Current status is ${result.status}`);
-            
-                if (result.status.isInBlock) {
-                  console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
-                } else if (result.status.isFinalized) {
-                  console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
-                  forceUpdate(Math.random())
-                  unsub();
-                }
-              })
-        } catch(error) {
-            console.log(error)
-        }
-    }
-
-    const addComment = async (postId: number, comment: string, author: any) => {
-        try {
-            const injected = await web3FromSource('polkadot-js')
-            const unsub: any = await api?.tx['socialMedia']['newComment'](postId, comment, author).signAndSend(user.address, {signer: injected.signer}, (result: any) => {
-                console.log(`Current status is ${result.status}`);
-                if (result.status.isInBlock) {
-                  console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
-                } else if (result.status.isFinalized) {
-                  console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
-                  forceUpdate(Math.random())
-                  unsub();
-                }
-              })
-        } catch(error) {
-            console.log(error)
-        }
-    }
 
     return(
         <Box className='postContainer'>
             <h1 style={{textAlign: 'center'}}>Posts by @{user.handle}</h1>
             {posts?.slice(0).reverse().map((post: any, i: number) => {
-                console.log(post)
                 return(
-                <>
+                <div key={i}>
                     <Photos
-                    key={i}
                     images={post.images}
                     />
                     <PostDetails
                     user={user}
                     post={post}
-                    like={likePost}
-                    addComment={addComment}
                     />
-                </>
+                </div>
                 )
             })}
         </Box>
@@ -93,7 +51,6 @@ export default function Posts() {
 }
 
 function Photos(props: any) {
-    console.log(props.posts)
     return(
         <Box className='deckContainer'>
             <Deck images={props.images} />
@@ -104,12 +61,78 @@ function Photos(props: any) {
 function PostDetails(props: any) {
 
     const [showComments, setShowComments] = useState(false)
+    const api = useRecoilValue(pol_api_dev)
     const param = {
         id: props.post.id,
         address: props.post.author
     }
-    const comments = useRecoilValue(get_comments_for_post(param))
+    const hasLikedPost = useRecoilValue(has_liked_post(param))
     const [cmt, setCmt] = useState('')
+    const [loading, setLoading] = useState(true)
+    const [liked, setLiked] = useState(true)
+
+    useEffect(() => {
+        if(loading) {
+            setLiked(hasLikedPost)
+            setLoading(false)
+        }
+    })
+
+    async function likePost(postId: number, author: any) {
+        try {
+            const injected = await web3FromSource('polkadot-js')
+            const unsub: any = await api?.tx['socialMedia']['likePost'](postId, author).signAndSend(props.user.address, {signer: injected.signer}, (result: any) => {
+                console.log(`Current status is ${result.status}`);
+            
+                if (result.status.isInBlock) {
+                  console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
+                  setLiked(!liked)
+                  unsub();
+                } else if (result.status.isFinalized) {
+                  console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
+                }
+              })
+        } catch(error) {
+            console.log(error)
+        }
+    }
+
+    async function unlikePost(postId: number, author: any) {
+        try {
+            const injected = await web3FromSource('polkadot-js')
+            const unsub: any = await api?.tx['socialMedia']['unlikePost'](postId, author).signAndSend(props.user.address, {signer: injected.signer}, (result: any) => {
+                console.log(`Current status is ${result.status}`);
+            
+                if (result.status.isInBlock) {
+                  console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
+                  setLiked(!liked)
+                  unsub();
+                } else if (result.status.isFinalized) {
+                  console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
+                }
+              })
+        } catch(error) {
+            console.log(error)
+        }
+    }
+
+    const addComment = async (postId: number, comment: string, author: any) => {
+        try {
+            const injected = await web3FromSource('polkadot-js')
+            const unsub: any = await api?.tx['socialMedia']['newComment'](postId, comment, author, new Date(Date.now()).toLocaleString()).signAndSend(props.user.address, {signer: injected.signer}, (result: any) => {
+                console.log(`Current status is ${result.status}`);
+                if (result.status.isInBlock) {
+                  console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
+                  setCmt('')
+                  unsub();
+                } else if (result.status.isFinalized) {
+                  console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
+                }
+              })
+        } catch(error) {
+            console.log(error)
+        }
+    }
 
     const handleChange = ({target: {value, id}}: any) => {
         switch(id) {
@@ -119,6 +142,22 @@ function PostDetails(props: any) {
             }
             default: break;
         }
+    }
+
+    const renderLike = () => {
+        return(
+                <div onClick={() => likePost(props.post.id, props.post.author)} className='footerItem'>
+                    <AiOutlineLike/> {props.post.likes}
+                </div>
+        )
+    }
+
+    const renderUnlike = () => {
+        return(
+                <div onClick={() => unlikePost(props.post.id, props.post.author)} className='footerItem'>
+                    Unlike {props.post.likes}
+                </div>
+        )
     }
 
     return(
@@ -135,41 +174,131 @@ function PostDetails(props: any) {
                 {props.post.content}
             </Box>
             <Box className='bodyFooter'>
-                <div onClick={() => props.like(props.post.id, props.post.author)} className='footerItem'>
-                    <AiOutlineLike/> {props.post.likes}
-                </div>
+                {liked ? renderUnlike() : renderLike()}
                 <div onClick={() => setShowComments(!showComments)} className='footerItem'>
-                    <MdAddComment/> {comments?.length} {showComments ? <AiOutlineCaretUp/> : <AiOutlineCaretDown/>}
+                    <MdAddComment/> {props.post.totalComments} {showComments ? <AiOutlineCaretUp/> : <AiOutlineCaretDown/>}
                 </div>
             </Box>
-            {showComments && 
-            <Box className='commentsContainer'>
-                {comments?.map((comment: any, i: number) => {
+            {showComments &&
+            <Box>
+                {props.post.comments?.map((comment: any, i: number) => {
                     return(
-                        <p key={i}>
-                            {comment.comment}
-                        </p>
+                        <div className='commentsContainer' key={i}>
+                            <CommentDetails
+                            comment={comment}
+                            postId={props.post.id}
+                            postAuthor={props.post.author}
+                            />
+                        </div>
                     )
                 })}
-                <FormControl sx={{ m: 1, width: 'auto' }} variant="standard">
+                <FormControl sx={{ m: 1, width: '95%', paddingLeft: '1%', paddingRight: '1%'}} variant="standard">
                     <InputLabel htmlFor="amino-name">Comment Text</InputLabel>
                     <Input
                     id='comment'
                     type='text'
                     value={cmt}
                     onChange={handleChange}
-                    placeholder='Pineapple Express'
+                    placeholder='Whats on your mind....'
                     startAdornment={
                         <InputAdornment position='start'>
                             <MdPostAdd/>
                         </InputAdornment>
                     }
                     />
-                    <Button color='success' variant='contained' onClick={() => props.addComment(props.post.id, cmt, props.post.author)}>
+                    <Button color='success' variant='contained' onClick={() => addComment(props.post.id, cmt, props.post.author)}>
                         Add Comment
                     </Button>
                 </FormControl>
             </Box>}
         </Box>
+    )
+}
+
+function CommentDetails(props: any) {
+    const api = useRecoilValue(pol_api_dev)
+    console.log(props)
+    const param = {
+        id: props.comment.id,
+        author: props.comment.author,
+    }
+    const userInfoComment = useRecoilValue(get_user_profile_image(props.comment.author))
+    const hasLikedComment = useRecoilValue(has_liked_comment(param))
+    const [loading, setLoading] = useState(true)
+    const [liked, setLiked] = useState(false)
+
+    useEffect(() => {
+        if(loading){
+            setLiked(hasLikedComment)
+            setLoading(false)
+        }
+    })
+
+    async function likeComment(postId: number, author: any) {
+        try {
+            const injected = await web3FromSource('polkadot-js')
+            const unsub: any = await api?.tx['socialMedia']['likePost'](postId, author).signAndSend(props.user.address, {signer: injected.signer}, (result: any) => {
+                console.log(`Current status is ${result.status}`);
+            
+                if (result.status.isInBlock) {
+                  console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
+                  setLiked(!liked)
+                  unsub();
+                } else if (result.status.isFinalized) {
+                  console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
+                }
+              })
+        } catch(error) {
+            console.log(error)
+        }
+    }
+
+    async function unlikeComment(postId: number, author: any) {
+        try {
+            const injected = await web3FromSource('polkadot-js')
+            const unsub: any = await api?.tx['socialMedia']['unlikePost'](postId, author).signAndSend(props.user.address, {signer: injected.signer}, (result: any) => {
+                console.log(`Current status is ${result.status}`);
+            
+                if (result.status.isInBlock) {
+                  console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
+                  setLiked(!liked)
+                  unsub();
+                } else if (result.status.isFinalized) {
+                  console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
+                }
+              })
+        } catch(error) {
+            console.log(error)
+        }
+    }
+
+    const renderLike = () => {
+        return(
+                <div onClick={() => likeComment(props.post.id, props.post.author)} className='footerItem'>
+                    <AiOutlineLike/> {props.comment.likes}
+                </div>
+        )
+    }
+
+    const renderUnlike = () => {
+        return(
+                <div onClick={() => unlikeComment(props.post.id, props.post.author)} className='footerItem'>
+                    Unlike {props.comment.likes}
+                </div>
+        )
+    }
+
+    return(
+            <Box className='commentsHeader'> 
+                <Avatar src={`https://ipfs.infura.io/ipfs/${userInfoComment[1]}`} />
+                <a>@{userInfoComment[0]}</a>
+                <p>{props.comment.date}</p>
+                <div className='commentsBody'>{props.comment.comment}</div>
+                <div className='commentsFooter'>
+                    <div className='commentsFooterItem'>
+                        {liked ? renderLike() : renderUnlike()}
+                    </div>
+                </div>
+            </Box>
     )
 }

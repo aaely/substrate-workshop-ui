@@ -123,3 +123,73 @@
     background-color: #555;
     color: rgb(255, 187, 0)
 }
+
+.commentsContainer {
+    background-color: #333;
+    border-radius: 5%;
+}
+
+.commentsContainer:hover {
+    background-color: #555;
+    border-radius: 5%;
+}
+
+.commentsHeader {
+    display: flex;
+    flex-wrap: wrap;
+    width: 40vw;
+    justify-content: flex-start;
+    align-content: center;
+    align-items: center;
+    border-radius: 10%;
+    padding: 2%;
+}
+
+.commentsHeader > a {
+    color: rgb(255, 123, 0);
+    padding-left: 2%;
+}
+
+.commentsHeader > p {
+    color: cyan;
+    width: 100%;
+}
+
+.commentsBody {
+    display: flex;
+    flex-wrap: wrap;
+    color: lime;
+    width: 40vw;
+    justify-content: flex-start;
+    align-content: center;
+    align-items: center;
+    border-radius: 10%;
+    padding: 2%;
+}
+
+.commentsFooter {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-content: center;
+    align-items: center;
+    height: 2vh;
+    width: 37vw;
+    padding: 2%;
+    border-radius: 10%;
+    background-color: #ccc;
+}
+
+.commentsFooterItem {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    height: 5vh;
+    width: 35vw;
+    border-radius: 20%;
+    background-color: #ccc;
+    color: black;
+}

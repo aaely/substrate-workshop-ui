@@ -31,14 +31,14 @@ export default function NewPost() {
                 console.log(`Current status is ${result.status}`);
                 if (result.status.isInBlock) {
                   console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
-                } else if (result.status.isFinalized) {
-                  console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
                   setText('')
                   setUrl([])
                   setBuffer([])
                   forceUpdate(Math.random())
                   setFlag(false)
                   unsub();
+                } else if (result.status.isFinalized) {
+                  console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
                 }
               })            
         } catch(error) {

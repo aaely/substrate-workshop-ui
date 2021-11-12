@@ -19,8 +19,7 @@ const trans = (r: number, s: number) =>
   `perspective(1500px) rotateX(30deg) rotateY(${r / 10}deg) rotateZ(${r}deg) scale(${s})`
 
 export default function Deck(deck: any) {
-  console.log(deck)
-    const [gone] = useState(() => new Set()) // The set flags all the cards that are flicked out
+  const [gone] = useState(() => new Set()) // The set flags all the cards that are flicked out
   const [props, api] = useSprings(deck.images.length, i => ({
     ...to(i),
     from: from(i),

@@ -47,23 +47,6 @@ export default function Nav() {
     return
   }
 
-  const sendAllAlice = async () => {
-    try {
-      const unsub: any = await api?.tx['balances']['transferAll'](acct, true).signAndSend(allAccounts[0], (result: any) => {
-        console.log(`Current status is ${result.status}, recipient is ${acct}`);
-    
-        if (result.status.isInBlock) {
-          console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
-        } else if (result.status.isFinalized) {
-          console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
-          unsub()
-        }
-      })
-    } catch(error) {
-      console.log(error)
-    }
-  }
-
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
     (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -137,12 +120,6 @@ export default function Nav() {
           </ListItem>
         ))}
       <Divider/>
-            <ListItem button onClick={() => sendAllAlice()} >
-              <ListItemIcon>
-                <FaDollarSign/>
-              </ListItemIcon>
-              <ListItemText primary='Fund My Wallet'/>
-            </ListItem>
       </List>
     </Box>
   );
