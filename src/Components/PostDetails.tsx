@@ -10,8 +10,7 @@ import {
     Button
 } from '@mui/material'
 import './app.css'
-import Deck from './Deck'
-import { 
+import {
     pol_api_dev, 
     has_liked_post,
     get_pol_acct,
@@ -34,8 +33,6 @@ export default function PostDetails(props: any) {
     const [cmt, setCmt] = useState('')
     const [loading, setLoading] = useState(true)
     const [liked, setLiked] = useState(true)
-    const cardRef: MutableRefObject<any> = useRef(null)
-    const executeScroll = () => cardRef.current.scrollIntoView()
     
 
     useEffect(() => {
@@ -92,7 +89,6 @@ export default function PostDetails(props: any) {
                   console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
                   setCmt('')
                   unsub();
-                  executeScroll()
                 } else if (result.status.isFinalized) {
                   console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
                 }
@@ -129,7 +125,7 @@ export default function PostDetails(props: any) {
     }
 
     return(
-        <Box ref={cardRef} className='bodyContainer'>
+        <Box className='bodyContainer'>
             <Box className='bodyHeader'>
                 <Avatar src={`https://ipfs.io/ipfs/${props.user.profileImage}`} />
                 <Box>
