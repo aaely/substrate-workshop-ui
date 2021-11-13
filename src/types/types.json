@@ -58,7 +58,8 @@
         "bio": "String",
         "website": "String",
         "profileImage": "String",
-        "total_orders" : "u32"
+        "totalOrders" : "u32",
+        "totalPosts" : "u32"
     },
     "Order": {
         "id": "u128",
@@ -82,7 +83,9 @@
     "Comments": {
         "author": "AccountId",
         "postId": "u128",
+        "commentId": "u128",
         "comment": "String",
-        "likes": "u32"
+        "likes": "u32",
+        "date" : "String"
     }
 }

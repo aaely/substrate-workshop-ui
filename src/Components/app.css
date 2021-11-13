@@ -15,6 +15,7 @@
     justify-content: space-evenly;
     height: 70vh;
     width: 100vw;
+    overflow-anchor: none;
 }
 
 .productsContainer {
@@ -53,6 +54,7 @@
     border-right: 3px double #555;
     border-radius: 5%;
     padding: 3%;
+    overflow-anchor: none;
 }
 
 .bodyHeader {

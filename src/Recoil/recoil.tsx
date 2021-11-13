@@ -474,12 +474,13 @@ export const has_liked_post = selectorFamily({
 })
 
 export const has_liked_comment = selectorFamily({
-    key: 'has_liked_post',
+    key: 'has_liked_comment',
     get: (param: any) => async ({get}) => {
         try {
             get(update)
+            console.log(param)
             const api = get(pol_api_dev)
-            const res: any = await api?.query['socialMedia']['hasLikedComment'](param.id, param.address)
+            const res: any = await api?.query['socialMedia']['hasLikedComment'](param.id, param.author)
             return res.toHuman()
         } catch(error) {
             console.log(error)

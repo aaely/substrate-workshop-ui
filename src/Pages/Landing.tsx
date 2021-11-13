@@ -35,10 +35,10 @@ const Landing =() => {
             
                 if (result.status.isInBlock) {
                   console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
-                } else if (result.status.isFinalized) {
-                  console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
                   setSending(false)
                   unsub()
+                } else if (result.status.isFinalized) {
+                  console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
                 }
               })
         } catch(error) {
