@@ -48,8 +48,7 @@ export default function Checkout() {
     const purchase = async () => {
         try{
             const injected = await web3FromSource('polkadot-js')
-            await api?.tx['orders']['purchase'](prod, new Date(Date.now()).toLocaleDateString(), acct).signAndSend(acct, {signer: injected.signer})
-            //await api?.tx['balances']['transfer']('5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY', total).signAndSend(acct, {signer: injected.signer})
+            await api?.tx['orders']['purchase'](prod, acct, new Date(Date.now()).toLocaleDateString()).signAndSend(acct, {signer: injected.signer})
             forceUpdate(Math.random())
             console.log(new Date(Date.now()).toLocaleDateString())
             setCart([])

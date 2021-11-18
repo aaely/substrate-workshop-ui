@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
 import { RecoilRoot } from 'recoil';
 import ReactDOM from 'react-dom';
+import Loader from './Components/Loader'
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
@@ -8,7 +9,7 @@ import reportWebVitals from './reportWebVitals';
 ReactDOM.render(
   <React.StrictMode>
     <RecoilRoot>
-      <Suspense fallback={'...loading'}>
+      <Suspense fallback={<Loader type={'circles'} />}>
       <App />
       </Suspense>
     </RecoilRoot>

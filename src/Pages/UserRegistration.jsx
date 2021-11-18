@@ -1,5 +1,5 @@
 import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil'
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import ipfs from '../utils/ipfs'
 import { 
     fName, 
@@ -33,6 +33,10 @@ import {MdAlternateEmail} from 'react-icons/md'
 import { web3FromSource } from '@polkadot/extension-dapp';
 import {GrContactInfo, GrMail} from 'react-icons/gr'
 import './app.css'
+import useDebounce from '../hooks/useDebounce';
+import useUpdateEffect from '../hooks/useUpdateEffect';
+import checkHandleAvailability from '../utils/checkHandleAvailability'
+import checkEmailAvailability from '../utils/checkEmailAvailability'
 
 
 export default function UserRegistration() {
@@ -41,6 +45,7 @@ export default function UserRegistration() {
     const NAMESPACE = useRecoilValue(namespace)
     const [bio, setBio] = useRecoilState(b)
     const [currentHandleId, setCurrentHandleId] = useState()
+    const [currentEmailId, setCurrentEmailId] = useState()
     const [website, setWebsite] = useRecoilState(w)
     const [fname, setfName] = useRecoilState(fName)
     const [lname, setlName] = useRecoilState(lName)
@@ -48,10 +53,39 @@ export default function UserRegistration() {
     const [email, setEmail] = useRecoilState(e)
     const [handle, setHandle] = useRecoilState(h)
     const [buffer, setBuffer] = useState([])
-    const isHandleAvailable = useRecoilValue(handleAvailability(currentHandleId))
-
+    const [isHandleAvailable, setIsHandleAvailable] = useState(true)
+    const [isEmailAvailable, setIsEmailAvailable] = useState(true)
+    useDebounce(() => updateHandleId(handle, NAMESPACE, setCurrentHandleId), 3000, [handle])
+    useDebounce(() => updateEmailId(email, NAMESPACE, setCurrentEmailId), 3000, [email])
     const forceUpdate = useSetRecoilState(update)
-    console.log(isHandleAvailable, currentHandleId)
+    const handleRef = useRef(null)
+
+    const updateHandleId = (h, n, s) => {
+        const id = v5(h, n)
+        s(parseInt(id, 16))
+    }
+
+    const updateEmailId = (e, n, s) => {
+        const id = v5(e, n)
+        s(parseInt(id, 16))
+    }
+
+    useUpdateEffect(() => {
+        if(!handleRef.current?.focus()){
+            handleRef.current?.focus()
+        }
+        (async () => {
+            try {
+                const availableHandle = await checkHandleAvailability(currentHandleId, api)
+                const availableEmail = await checkEmailAvailability(currentEmailId, api)
+                setIsHandleAvailable(availableHandle)
+                setIsEmailAvailable(availableEmail)
+                handleRef.current?.focus()
+            } catch(error) {
+                console.log(error)
+            }
+        })()
+    },[currentHandleId])
 
     const handleChange = ({target: {id, value, files}}) => {
         switch(id) {
@@ -72,10 +106,6 @@ export default function UserRegistration() {
                 break;
             }
             case 'handle': {
-                if(handle.length > 3) {
-                    const id = v5(value, NAMESPACE)
-                    setCurrentHandleId(parseInt(id, 16))
-                }
                 setHandle(value)
                 break;
             }
@@ -116,10 +146,9 @@ export default function UserRegistration() {
     const createUser = async () => {
         try{
             const injected = await web3FromSource('polkadot-js')
-            const id = v5(handle, NAMESPACE)
             const imageHash = await saveImage()
             console.log(acct)
-            const unsub = await api?.tx['users']['newUser'](fname, lname, phone, email, handle, parseInt(id, 16), bio, website, imageHash).signAndSend(acct, {signer: injected.signer}, (result) => {
+            const unsub = await api?.tx['users']['newUser'](fname, lname, phone, email, currentEmailId, handle, currentHandleId, bio, website, imageHash).signAndSend(acct, {signer: injected.signer}, (result) => {
                 console.log(`Current status is ${result.status}`);
             
                 if (result.status.isInBlock) {
@@ -195,6 +224,10 @@ export default function UserRegistration() {
               </InputAdornment>
           }
           />
+          {isEmailAvailable ? 
+            <FormHelperText style={{color: 'red'}} id="component-error-text">Email already in use</FormHelperText> : 
+            <FormHelperText style={{color: 'green'}} id="component-error-text">Email is available!</FormHelperText>
+          }
         </FormControl>
         <FormControl sx={{ m: 1, width: '25ch' }} variant="standard">
         <InputLabel htmlFor="handle">Handle</InputLabel>
@@ -203,15 +236,22 @@ export default function UserRegistration() {
           type='text'
           value={handle}
           onChange={handleChange}
-          placeholder='some.email@gmail.com'
+          placeholder='somehandle1234'
           startAdornment={
               <InputAdornment position='start'>
                   <MdAlternateEmail/>
               </InputAdornment>
           }
           />
-          {isHandleAvailable && <FormHelperText style={{color: 'red'}} id="component-error-text">Handle already in use</FormHelperText>}
-          {!isHandleAvailable && <FormHelperText style={{color: 'green'}} id="component-error-text">Handle is available!</FormHelperText>}
+          {isHandleAvailable ? 
+          <FormHelperText style={{color: 'red'}} id="component-error-text">
+              Handle already in use
+          </FormHelperText>
+          : 
+          <FormHelperText style={{color: 'green'}} id="component-error-text">
+              Handle is available!
+          </FormHelperText>
+          }
         </FormControl>
         <FormControl sx={{ m: 1, width: '25ch' }} variant="standard">
         <InputLabel htmlFor="handle">Bio</InputLabel>

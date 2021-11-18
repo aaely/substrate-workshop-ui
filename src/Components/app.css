@@ -195,3 +195,7 @@
     background-color: #ccc;
     color: black;
 }
+
+.commentsFooterIter > div:hover {
+    color: lime
+}

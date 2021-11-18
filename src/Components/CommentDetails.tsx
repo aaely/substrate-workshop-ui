@@ -1,11 +1,12 @@
 import { Avatar, Box } from '@mui/material'
-import { useRecoilValue } from 'recoil'
+import { useRecoilValue, useRecoilState } from 'recoil'
 import './app.css'
 import { 
     pol_api_dev, 
     get_user_profile_image,
     has_liked_comment,
     get_pol_acct,
+    commentsLoading,
 } from '../Recoil/recoil'
 import {AiOutlineLike} from 'react-icons/ai'
 import { web3FromSource } from '@polkadot/extension-dapp'
@@ -21,7 +22,7 @@ export default function CommentDetails(props: any) {
     }
     const userInfoComment = useRecoilValue(get_user_profile_image(props.comment.author))
     const hasLikedComment = useRecoilValue(has_liked_comment(param))
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useRecoilState(commentsLoading)
     const [liked, setLiked] = useState(true)
     
 
@@ -30,7 +31,7 @@ export default function CommentDetails(props: any) {
             setLiked(hasLikedComment)
             setLoading(false)
         }
-    })
+    },[loading])
 
     async function likeComment(commentId: number, commentAuthor: any, postId: number, author: any) {
         try {
@@ -39,7 +40,7 @@ export default function CommentDetails(props: any) {
                 console.log(`Current status is ${result.status}`);
             
                 if (result.status.isInBlock) {
-                  console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
+                  console.log(`Transcaction included at blockHash ${result.status.asInBlock}`);
                   setLiked(!liked)
                   unsub();
                 } else if (result.status.isFinalized) {

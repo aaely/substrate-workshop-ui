@@ -1,4 +1,4 @@
-import { useRecoilValue, useRecoilState } from 'recoil'
+import { useRecoilValue, useRecoilState, useSetRecoilState } from 'recoil'
 import './app.css'
 import { Box, Button } from '@mui/material'
 import { useTransition, animated } from 'react-spring'
@@ -11,7 +11,8 @@ import {
     is_user_registered, 
     get_pol_accts, 
     pol_api_dev, 
-    get_pol_acct 
+    get_pol_acct,
+    update
 } from '../Recoil/recoil'
 import UserRegistration from './UserRegistration'
 import { useState } from 'react'
@@ -19,13 +20,14 @@ import { useState } from 'react'
 const Landing =() => {
 
     const [isNewPost, setIsNewPost] = useRecoilState(newPostFlag)
-    const acct = useRecoilValue(get_pol_acct)
     const user = useRecoilValue(u)
+    const acct = useRecoilValue(get_pol_acct)
     const registered = useRecoilValue(is_user_registered(user.address))
     const allAccounts = useRecoilValue(get_pol_accts)
     const api = useRecoilValue(pol_api_dev)
     const [sending, setSending] = useState(false)
     const bal = useRecoilValue(balance)
+    const forceUpdate = useSetRecoilState(update)
 
     const sendAllAlice = async () => {
         try {
@@ -36,6 +38,7 @@ const Landing =() => {
                 if (result.status.isInBlock) {
                   console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
                   setSending(false)
+                  forceUpdate(Math.random())
                   unsub()
                 } else if (result.status.isFinalized) {
                   console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
@@ -63,7 +66,7 @@ const Landing =() => {
     return(
         <Box className="container">
             {!registered && !sending && parseInt(bal?.free) === 0 && <Button variant='contained' color='success' onClick={() => sendAllAlice()}>
-                I need funds Homie!    
+                I need funds!    
             </Button>}
             {!registered && sending &&  <Button variant='contained' color='success' onClick={() => sendAllAlice()}>
                 Funds Incoming...

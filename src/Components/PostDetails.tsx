@@ -16,9 +16,9 @@ import {
     get_pol_acct,
 } from '../Recoil/recoil'
 import { web3FromSource } from '@polkadot/extension-dapp'
-import { useEffect, useState, useRef, MutableRefObject } from 'react'
-import { useSpring, animated } from 'react-spring'
-import CommentDetails from '../Components/CommentDetails'
+import { useEffect, useState } from 'react'
+import { useTransition, animated } from 'react-spring'
+import PostComments from './PostComments'
 
 export default function PostDetails(props: any) {
 
@@ -32,7 +32,7 @@ export default function PostDetails(props: any) {
     const hasLikedPost = useRecoilValue(has_liked_post(param))
     const [cmt, setCmt] = useState('')
     const [loading, setLoading] = useState(true)
-    const [liked, setLiked] = useState(true)
+    const [liked, setLiked] = useState(false)
     
 
     useEffect(() => {
@@ -40,7 +40,7 @@ export default function PostDetails(props: any) {
             setLiked(hasLikedPost)
             setLoading(false)
         }
-    })
+    },[liked, loading])
 
     async function likePost(postId: number, author: any) {
         try {
@@ -51,6 +51,7 @@ export default function PostDetails(props: any) {
                 if (result.status.isInBlock) {
                   console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
                   setLiked(!liked)
+                  setLoading(true)
                   unsub();
                 } else if (result.status.isFinalized) {
                   console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
@@ -80,33 +81,7 @@ export default function PostDetails(props: any) {
         }
     }
 
-    const addComment = async (postId: number, comment: string, author: any) => {
-        try {
-            const injected = await web3FromSource('polkadot-js')
-            const unsub: any = await api?.tx['socialMedia']['newComment'](postId, comment, author, new Date(Date.now()).toLocaleString()).signAndSend(props.user.address, {signer: injected.signer}, (result: any) => {
-                console.log(`Current status is ${result.status}`);
-                if (result.status.isInBlock) {
-                  console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
-                  setCmt('')
-                  unsub();
-                } else if (result.status.isFinalized) {
-                  console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
-                }
-              })
-        } catch(error) {
-            console.log(error)
-        }
-    }
-
-    const handleChange = ({target: {value, id}}: any) => {
-        switch(id) {
-            case 'comment': {
-                setCmt(value)
-                break;
-            }
-            default: break;
-        }
-    }
+    
 
     const renderLike = () => {
         return(
@@ -144,37 +119,12 @@ export default function PostDetails(props: any) {
                 </div>
             </Box>
             {showComments &&
-            <Box>
-                {props.post.comments?.map((comment: any, i: number) => {
-                    return(
-                        <div className='commentsContainer' key={i}>
-                            <CommentDetails
-                            comment={comment}
-                            postId={props.post.id}
-                            postAuthor={props.post.author}
-                            />
-                        </div>
-                    )
-                })}
-                <FormControl sx={{ m: 1, width: '95%', paddingLeft: '1%', paddingRight: '1%'}} variant="standard">
-                    <InputLabel htmlFor="amino-name">Comment Text</InputLabel>
-                    <Input
-                    id='comment'
-                    type='text'
-                    value={cmt}
-                    onChange={handleChange}
-                    placeholder='Whats on your mind....'
-                    startAdornment={
-                        <InputAdornment position='start'>
-                            <MdPostAdd/>
-                        </InputAdornment>
-                    }
-                    />
-                    <Button color='success' variant='contained' onClick={() => addComment(props.post.id, cmt, props.post.author)}>
-                        Add Comment
-                    </Button>
-                </FormControl>
-            </Box>}
+                <PostComments 
+                postId={props.post.id} 
+                postAuthor={props.post.author} 
+                comments={props.post.comments}
+                />
+            }
         </Box>
     )
 }

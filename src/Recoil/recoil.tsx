@@ -478,7 +478,6 @@ export const has_liked_comment = selectorFamily({
     get: (param: any) => async ({get}) => {
         try {
             get(update)
-            console.log(param)
             const api = get(pol_api_dev)
             const res: any = await api?.query['socialMedia']['hasLikedComment'](param.id, param.author)
             return res.toHuman()
@@ -500,4 +499,9 @@ export const get_comments_for_post = selectorFamily({
             console.log(error)
         }
     }
+})
+
+export const commentsLoading = atom({
+    key: 'commentsLoading',
+    default: true
 })

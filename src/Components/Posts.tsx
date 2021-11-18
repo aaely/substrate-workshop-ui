@@ -1,6 +1,7 @@
 import { Box } from '@mui/material'
 import { useRecoilValue } from 'recoil'
 import { posts as p, user as u } from '../Recoil/balanceListener'
+import { postFeed } from '../Recoil/blockListener'
 import './app.css'
 import Deck from './Deck'
 import { pol_api_dev } from '../Recoil/recoil'
@@ -9,7 +10,8 @@ import PostDetails from '../Components/PostDetails'
 export default function Posts() {
 
     const user: any = useRecoilValue(u)
-    const posts = useRecoilValue(p)
+    const myPosts = useRecoilValue(p)
+    const posts: any = useRecoilValue(postFeed)
     const api: any = useRecoilValue(pol_api_dev)
 
     return(
