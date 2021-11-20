@@ -59,6 +59,7 @@ export default function UserRegistration() {
     useDebounce(() => updateEmailId(email, NAMESPACE, setCurrentEmailId), 3000, [email])
     const forceUpdate = useSetRecoilState(update)
     const handleRef = useRef(null)
+    const emailRef = useRef(null)
 
     const updateHandleId = (h, n, s) => {
         const id = v5(h, n)
@@ -85,7 +86,7 @@ export default function UserRegistration() {
                 console.log(error)
             }
         })()
-    },[currentHandleId])
+    },[currentHandleId, currentEmailId])
 
     const handleChange = ({target: {id, value, files}}) => {
         switch(id) {

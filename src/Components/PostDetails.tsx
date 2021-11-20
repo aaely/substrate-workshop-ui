@@ -1,46 +1,29 @@
 import { Avatar, Box } from '@mui/material'
 import { useRecoilValue } from 'recoil'
 import {AiOutlineLike, AiOutlineCaretUp, AiOutlineCaretDown} from 'react-icons/ai'
-import {MdAddComment, MdPostAdd} from 'react-icons/md'
-import {
-    FormControl,
-    InputLabel,
-    InputAdornment,
-    Input,
-    Button
-} from '@mui/material'
+import {MdAddComment} from 'react-icons/md'
 import './app.css'
 import {
     pol_api_dev, 
-    has_liked_post,
-    get_pol_acct,
 } from '../Recoil/recoil'
 import { web3FromSource } from '@polkadot/extension-dapp'
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTransition, animated } from 'react-spring'
 import PostComments from './PostComments'
+import checkHasLikedPost from '../utils/checkHasLikedPost'
 
 export default function PostDetails(props: any) {
 
     const [showComments, setShowComments] = useState(false)
     const api = useRecoilValue(pol_api_dev)
-    const addr = useRecoilValue(get_pol_acct)
-    const param = {
-        id: props.post.id,
-        address: addr
-    }
-    const hasLikedPost = useRecoilValue(has_liked_post(param))
-    const [cmt, setCmt] = useState('')
-    const [loading, setLoading] = useState(true)
     const [liked, setLiked] = useState(false)
     
 
     useEffect(() => {
-        if(loading) {
-            setLiked(hasLikedPost)
-            setLoading(false)
-        }
-    },[liked, loading])
+        (async() => {
+            setLiked(await checkHasLikedPost(props.user.address, props.post.id, api))
+        })()
+    },[props.post.likes, props.post])
 
     async function likePost(postId: number, author: any) {
         try {
@@ -51,7 +34,6 @@ export default function PostDetails(props: any) {
                 if (result.status.isInBlock) {
                   console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
                   setLiked(!liked)
-                  setLoading(true)
                   unsub();
                 } else if (result.status.isFinalized) {
                   console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);

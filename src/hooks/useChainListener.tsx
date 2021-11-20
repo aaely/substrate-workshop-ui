@@ -7,16 +7,23 @@ import {
     eventFeed as e,
     postFeed,
     updateCommentsPostFeed,
+    updatePostUnliked,
+    updatePostLiked,
+    updateCommentLiked,
+    updateCommentUnliked,
 } from '../Recoil/blockListener'
 
 const FILTERED_EVENTS = [
-    'system:ExtrinsicSuccess:: (phase={"applyExtrinsic":0})',
-    'system:ExtrinsicSuccess:: (phase={"applyExtrinsic":1})',
+    'system:ExtrinsicSuccess::',
   ];
 
 const TRACKED_EVENTS = [
-    'socialMedia:NewPost:: (phase={"applyExtrinsic":1})',
-    'socialMedia:NewComment:: (phase={"applyExtrinsic":1})',
+    'socialMedia:NewPost::',
+    'socialMedia:NewComment::',
+    'socialMedia:PostLiked::',
+    'socialMedia:PostUnliked::',
+    'socialMedia:CommentLiked::',
+    'socialMedia:CommentUnliked::',
 ]
 
 const useChainListener = () => {
@@ -29,7 +36,11 @@ const useChainListener = () => {
     const bn = useRecoilValue(b)
     const [posts, setPosts] = useRecoilState(postFeed)
     const updateComments = useSetRecoilState(updateCommentsPostFeed)
-    console.log(posts)
+    const likedPost = useSetRecoilState(updatePostLiked)
+    const unlikedPost = useSetRecoilState(updatePostUnliked)
+    const likedComment = useSetRecoilState(updateCommentLiked)
+    const unlikedComment = useSetRecoilState(updateCommentUnliked)
+    console.log(feed)
 
     useEffect(() => {
         (async () => {
@@ -41,14 +52,15 @@ const useChainListener = () => {
             })
             if(feed?.length > 1000) {
                 setFeed([])
+                console.log('event feed cleared')
             }
             await api?.query.system.events(events => {
                 events.forEach(record => {
-                    const { event, phase }: any = record
+                    const { event }: any = record
                     const types = event.typeDef
-                    const eventName = `${event.section}:${event.method}:: (phase=${phase.toString()})`
+                    const eventName = `${event.section}:${event.method}::`
+                    console.log(eventName)
                     if (FILTERED_EVENTS.includes(eventName)) return
-                    console.log(eventName, TRACKED_EVENTS[0])
                     switch (eventName) {
                         case TRACKED_EVENTS[0]: {
                             let newPost = event['data'][0].toHuman()
@@ -71,9 +83,36 @@ const useChainListener = () => {
                             }
                             break;
                         }
+                        case TRACKED_EVENTS[2]: {
+                            const postLiked = event['data'][0].toHuman()
+                            likedPost(postLiked)
+                            break;
+                        }
+                        case TRACKED_EVENTS[3]: {
+                            const postUnliked = event['data'][0].toHuman()
+                            unlikedPost(postUnliked)
+                            break;
+                        }
+                        case TRACKED_EVENTS[4]: {
+                            const payload = {
+                                postId: event['data'][0].toHuman(),
+                                commentId: event['data'][1].toHuman(),
+                            }
+                            likedComment(payload)
+                            break;
+                        }
+                        case TRACKED_EVENTS[5]: {
+                            const payload = {
+                                postId: event['data'][0].toHuman(),
+                                commentId: event['data'][1].toHuman(),
+                            }
+                            console.log(payload)
+                            unlikedComment(payload)
+                            break;
+                        }
+                        default: break;
                     }
                     const params = event.data.map((data:any, index: number) => `${types[index].type}: ${data.toHuman()}`)
-                    console.log()
                     setFeed((ev: any) => [{
                         icon: 'bell',
                         summary: `${eventName}-${ev.length}`,

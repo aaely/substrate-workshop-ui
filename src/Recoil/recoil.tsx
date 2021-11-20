@@ -82,7 +82,12 @@ export const get_pol_acct = selector({
             console.log(error)
             return 'no account found'
         }
-    }
+    },
+    dangerouslyAllowMutability: true,
+    cachePolicy_UNSTABLE: {
+        // Only store the most recent set of dependencies and their values
+        eviction: 'most-recent',
+      },
 })
 
 export const get_cannabisProductByCount = selectorFamily({
@@ -214,7 +219,12 @@ export const get_user_posts = selectorFamily({
         } catch(error) {
             console.log(error)
         }
-    }
+    },
+    dangerouslyAllowMutability: true,
+    cachePolicy_UNSTABLE: {
+        // Only store the most recent set of dependencies and their values
+        eviction: 'most-recent',
+      },
 })
 
 export const get_post_by_count = selectorFamily({
@@ -233,7 +243,7 @@ export const get_post_by_count = selectorFamily({
 })
 
 export const get_comment_by_count = selectorFamily({
-    key: 'get_post_by_count',
+    key: 'get_comment_by_count',
     get: param => async ({get}) => {
       try {
         get(update)
@@ -470,7 +480,12 @@ export const has_liked_post = selectorFamily({
         } catch(error) {
             console.log(error)
         }
-    }
+    },
+    dangerouslyAllowMutability: true,
+    cachePolicy_UNSTABLE: {
+        // Only store the most recent set of dependencies and their values
+        eviction: 'most-recent',
+      },
 })
 
 export const has_liked_comment = selectorFamily({
@@ -484,7 +499,12 @@ export const has_liked_comment = selectorFamily({
         } catch(error) {
             console.log(error)
         }
-    }
+    },
+    dangerouslyAllowMutability: true,
+    cachePolicy_UNSTABLE: {
+        // Only store the most recent set of dependencies and their values
+        eviction: 'most-recent',
+      },
 })
 
 export const get_comments_for_post = selectorFamily({

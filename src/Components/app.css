@@ -199,3 +199,11 @@
 .commentsFooterIter > div:hover {
     color: lime
 }
+
+.feedBanner {
+    display: flex;
+    width: 100vw;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: center;
+}

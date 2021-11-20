@@ -4,39 +4,35 @@ import './app.css'
 import { 
     pol_api_dev, 
     get_user_profile_image,
-    has_liked_comment,
-    get_pol_acct,
     commentsLoading,
 } from '../Recoil/recoil'
+import {
+    user as u
+} from '../Recoil/balanceListener'
 import {AiOutlineLike} from 'react-icons/ai'
 import { web3FromSource } from '@polkadot/extension-dapp'
 import { useEffect, useState } from 'react'
 import { useSpring, animated } from 'react-spring'
+import useUpdateEffect from '../hooks/useUpdateEffect'
+import checkHasLikedComment from '../utils/checkHasLikedComment'
 
 export default function CommentDetails(props: any) {
     const api = useRecoilValue(pol_api_dev)
-    const acct = useRecoilValue(get_pol_acct)
-    const param = {
-        id: props.comment.commentId,
-        author: acct,
-    }
+    const user = useRecoilValue(u)
     const userInfoComment = useRecoilValue(get_user_profile_image(props.comment.author))
-    const hasLikedComment = useRecoilValue(has_liked_comment(param))
-    const [loading, setLoading] = useRecoilState(commentsLoading)
     const [liked, setLiked] = useState(true)
     
 
     useEffect(() => {
-        if(loading){
-            setLiked(hasLikedComment)
-            setLoading(false)
-        }
-    },[loading])
+        (async () => {
+            setLiked(await checkHasLikedComment(user.address, props.comment.commentId, api))
+        })()
+    },[props.comment])
 
     async function likeComment(commentId: number, commentAuthor: any, postId: number, author: any) {
         try {
             const injected = await web3FromSource('polkadot-js')
-            const unsub: any = await api?.tx['socialMedia']['likeComment'](commentId, commentAuthor, postId, author).signAndSend(acct, {signer: injected.signer}, (result: any) => {
+            const unsub: any = await api?.tx['socialMedia']['likeComment'](commentId).signAndSend(user.address, {signer: injected.signer}, (result: any) => {
                 console.log(`Current status is ${result.status}`);
             
                 if (result.status.isInBlock) {
@@ -55,7 +51,7 @@ export default function CommentDetails(props: any) {
     async function unlikeComment(commentId: number, commentAuthor: any, postId: number, author: any) {
         try {
             const injected = await web3FromSource('polkadot-js')
-            const unsub: any = await api?.tx['socialMedia']['unlikeComment'](commentId, commentAuthor, postId, author).signAndSend(acct, {signer: injected.signer}, (result: any) => {
+            const unsub: any = await api?.tx['socialMedia']['unlikeComment'](commentId).signAndSend(user.address, {signer: injected.signer}, (result: any) => {
                 console.log(`Current status is ${result.status}`);
             
                 if (result.status.isInBlock) {
