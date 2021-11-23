@@ -38,6 +38,7 @@ export const pol_api = selector({
             return res
         } catch (error) {
             console.log(error)
+            window.open('https://polkadot.js.org/extension/', '_blank')
         }
     }
 })
@@ -51,6 +52,7 @@ export const pol_api_dev = selector({
             return res
         } catch (error) {
             console.log(error)
+            window.open('https://polkadot.js.org/extension/', '_blank')
         }
     }
 })
@@ -80,6 +82,7 @@ export const get_pol_acct = selector({
             return accts[0].address
         } catch(error) {
             console.log(error)
+            window.open('https://polkadot.js.org/extension/', '_blank')
             return 'no account found'
         }
     },

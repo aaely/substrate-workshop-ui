@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { pol_api_dev, get_pol_acct } from '../Recoil/recoil'
+import { pol_api_dev } from '../Recoil/recoil'
 import { 
     blockNumber as b, 
     finalizedBlockNumber as f, 
@@ -40,7 +40,6 @@ const useChainListener = () => {
     const unlikedPost = useSetRecoilState(updatePostUnliked)
     const likedComment = useSetRecoilState(updateCommentLiked)
     const unlikedComment = useSetRecoilState(updateCommentUnliked)
-    console.log(feed)
 
     useEffect(() => {
         (async () => {
@@ -59,7 +58,6 @@ const useChainListener = () => {
                     const { event }: any = record
                     const types = event.typeDef
                     const eventName = `${event.section}:${event.method}::`
-                    console.log(eventName)
                     if (FILTERED_EVENTS.includes(eventName)) return
                     switch (eventName) {
                         case TRACKED_EVENTS[0]: {
@@ -76,11 +74,7 @@ const useChainListener = () => {
                         }
                         case TRACKED_EVENTS[1]: {
                             let newComment = event['data'][0].toHuman()
-                            let index = posts.findIndex((x: any) => x.id == newComment.postId)
-                            let commentIndex = posts[index].comments?.findIndex((x: any) => x.commentId == newComment.commentId)
-                            if(commentIndex < 0) {
-                                updateComments(newComment)
-                            }
+                            updateComments(newComment)
                             break;
                         }
                         case TRACKED_EVENTS[2]: {
@@ -106,7 +100,6 @@ const useChainListener = () => {
                                 postId: event['data'][0].toHuman(),
                                 commentId: event['data'][1].toHuman(),
                             }
-                            console.log(payload)
                             unlikedComment(payload)
                             break;
                         }

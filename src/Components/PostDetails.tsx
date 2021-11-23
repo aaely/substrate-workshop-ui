@@ -25,6 +25,12 @@ export default function PostDetails(props: any) {
         })()
     },[props.post.likes, props.post])
 
+    useEffect(() => {
+        if(props.index === 0) {
+            setShowComments(true)
+        }
+    },[])
+
     async function likePost(postId: number, author: any) {
         try {
             const injected = await web3FromSource('polkadot-js')
@@ -97,7 +103,7 @@ export default function PostDetails(props: any) {
             <Box className='bodyFooter'>
                 {liked ? renderUnlike() : renderLike()}
                 <div onClick={() => setShowComments(!showComments)} className='footerItem'>
-                    <MdAddComment/> {props.post.totalComments} {showComments ? <AiOutlineCaretUp/> : <AiOutlineCaretDown/>}
+                    <MdAddComment/> {props.post.comments?.length} {showComments ? <AiOutlineCaretUp/> : <AiOutlineCaretDown/>}
                 </div>
             </Box>
             {showComments &&

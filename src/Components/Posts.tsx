@@ -4,7 +4,6 @@ import { posts as p, user as u } from '../Recoil/balanceListener'
 import { postFeed, currentFeed } from '../Recoil/blockListener'
 import './app.css'
 import Deck from './Deck'
-import { pol_api_dev } from '../Recoil/recoil'
 import PostDetails from '../Components/PostDetails'
 import { useTransition, animated } from 'react-spring'
 
@@ -86,6 +85,7 @@ function LiveFeed(props: any) {
                     <PostDetails
                     user={user}
                     post={post}
+                    index={i}
                     />
                 </div>
                 )

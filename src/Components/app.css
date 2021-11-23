@@ -172,7 +172,8 @@
 .commentsFooter {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    flex-direction: row;
+    justify-content: space-evenly;
     align-content: center;
     align-items: center;
     height: 2vh;
@@ -182,22 +183,18 @@
     background-color: #ccc;
 }
 
-.commentsFooterItem {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
+.commentsFooter > div {
     justify-content: center;
     align-content: center;
     align-items: center;
-    height: 5vh;
-    width: 35vw;
+    background-color: black;
+    color: lime;
     border-radius: 20%;
-    background-color: #ccc;
-    color: black;
+    padding: 1%;
 }
 
-.commentsFooterIter > div:hover {
-    color: lime
+.commentsFooter > div:hover {
+    color: cyan;
 }
 
 .feedBanner {

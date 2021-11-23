@@ -1,4 +1,4 @@
-import { postText, postImages, commentText, postTab, newPostFlag } from "../Recoil/forms";
+import { postText, postTab, newPostFlag } from "../Recoil/forms";
 import { useRecoilValue, useRecoilState, useSetRecoilState } from 'recoil'
 import {Input,
         InputLabel,
@@ -7,7 +7,7 @@ import {Input,
         Button} from '@mui/material';
 import {MdPostAdd} from 'react-icons/md'
 import { useState } from "react";
-import { pol_api_dev, update } from "../Recoil/recoil";
+import { pol_api_dev } from "../Recoil/recoil";
 import { web3FromSource } from "@polkadot/extension-dapp";
 import ipfs from "../utils/ipfs";
 import { account } from "../Recoil/balanceListener";
@@ -20,7 +20,6 @@ export default function NewPost() {
     const [url, setUrl] = useState([])
     const api = useRecoilValue(pol_api_dev)
     const acct = useRecoilValue(account)
-    const forceUpdate = useSetRecoilState(update)
     const setFlag = useSetRecoilState(newPostFlag)
 
     const createPost = async () => {
@@ -30,17 +29,16 @@ export default function NewPost() {
             const unsub = await api?.tx['socialMedia']['newPost'](new Date(Date.now()).toLocaleString(), [], [], text, images).signAndSend(acct, {signer: injected.signer}, (result) => {
                 console.log(`Current status is ${result.status}`);
                 if (result.status.isInBlock) {
-                  console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
-                  setText('')
-                  setUrl([])
-                  setBuffer([])
-                  forceUpdate(Math.random())
-                  setFlag(false)
-                  unsub();
+                    console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
+                    setText('')
+                    setUrl([])
+                    setBuffer([])
+                    setFlag(false)
+                    unsub()
                 } else if (result.status.isFinalized) {
-                  console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
+                console.log(`Transaction finalized at blockHash ${result.status.asFinalized}`);
                 }
-              })            
+            })
         } catch(error) {
             console.log(error)
         }

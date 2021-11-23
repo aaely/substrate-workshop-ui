@@ -159,7 +159,7 @@ export default function Nav() {
         </div>
         <div>
           <Badge color='primary' badgeContent={cart.length}>
-            <IconButton onClick={() => setView('checkout')}>
+            <IconButton style={{color: 'lime'}} onClick={() => setView('checkout')}>
             <FaShoppingCart/>
             </IconButton>
           </Badge>

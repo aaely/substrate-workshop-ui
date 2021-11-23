@@ -43,8 +43,12 @@ export const updateCommentsPostFeed = selector({
         let posts = [...get(postFeed)]
         let index = posts.findIndex((x: any) => x.id == comment.postId)
         if(index === -1) return
-        posts[index].comments.push(comment)
-        set(postFeed, [...posts])
+        let commentIndex = posts[index].comments?.findIndex((x: any) => x.commentId == comment.commentId)
+        if(commentIndex === -1) {
+            posts[index].comments.push(comment)
+            set(postFeed, [...posts])
+        }
+        return
     },
     dangerouslyAllowMutability: true,
     cachePolicy_UNSTABLE: {
