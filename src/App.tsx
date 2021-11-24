@@ -15,6 +15,7 @@ import Products from './Pages/Products';
 import Checkout from './Pages/Checkout';
 import Orders from './Pages/Orders';
 import { useRecoilValue } from 'recoil';
+import useSubstrateEventListener from './hooks/useSubstrateEventListener'
 
 const hashMap = new Map([
   ['aminoBuilder', <AminoBuilder/>],
@@ -34,6 +35,7 @@ function App() {
 
   useChainListener()
   useBalanceListener()
+  useSubstrateEventListener()
 
   const view: string = useRecoilValue(currentView)
 
