@@ -7,6 +7,12 @@ import {MdPostAdd} from 'react-icons/md'
 import Posts from '../Components/Posts'
 import { newPostFlag } from '../Recoil/forms'
 import { balance, user as u } from '../Recoil/balanceListener'
+import {
+    BTCPrice,
+    ETHPrice,
+    DOTPrice,
+    ATOMPrice,
+} from '../Recoil/blockListener'
 import { 
     is_user_registered, 
     get_pol_accts, 

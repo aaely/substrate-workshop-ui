@@ -43,18 +43,15 @@ export const updateCommentsPostFeed = selector({
         let posts = [...get(postFeed)]
         let index = posts.findIndex((x: any) => x.id == comment.postId)
         if(index === -1) return
-        let commentIndex = posts[index].comments?.findIndex((x: any) => x.commentId == comment.commentId)
-        if(commentIndex === -1) {
-            posts[index].comments.push(comment)
-            set(postFeed, [...posts])
-        }
+        posts[index].totalComments += 1
+        set(postFeed, [...posts])
         return
     },
     dangerouslyAllowMutability: true,
     cachePolicy_UNSTABLE: {
         // Only store the most recent set of dependencies and their values
         eviction: 'most-recent',
-      },
+    },
 })
 
 export const updatePostLiked = selector({
@@ -70,7 +67,7 @@ export const updatePostLiked = selector({
     cachePolicy_UNSTABLE: {
         // Only store the most recent set of dependencies and their values
         eviction: 'most-recent',
-      },
+    },
 })
 
 export const updatePostUnliked = selector({
@@ -86,7 +83,7 @@ export const updatePostUnliked = selector({
     cachePolicy_UNSTABLE: {
         // Only store the most recent set of dependencies and their values
         eviction: 'most-recent',
-      },
+    },
 })
 
 export const updateCommentLiked = selector({
@@ -105,7 +102,7 @@ export const updateCommentLiked = selector({
     cachePolicy_UNSTABLE: {
         // Only store the most recent set of dependencies and their values
         eviction: 'most-recent',
-      },
+    },
 })
 
 export const updateCommentUnliked = selector({
@@ -124,5 +121,34 @@ export const updateCommentUnliked = selector({
     cachePolicy_UNSTABLE: {
         // Only store the most recent set of dependencies and their values
         eviction: 'most-recent',
-      },
+    },
+})
+
+export const commentLikedId = atom({
+    key: 'commentLikedId',
+    default: 0,
+})
+
+export const BTCPrice = atom({
+    key: 'BTCPrice',
+    default: 0,
+    effects_UNSTABLE: [persistAtom]
+})
+
+export const ETHPrice = atom({
+    key: 'BTCPrice',
+    default: 0,
+    effects_UNSTABLE: [persistAtom]
+})
+
+export const DOTPrice = atom({
+    key: 'BTCPrice',
+    default: 0,
+    effects_UNSTABLE: [persistAtom]
+})
+
+export const ATOMPrice = atom({
+    key: 'BTCPrice',
+    default: 0,
+    effects_UNSTABLE: [persistAtom]
 })

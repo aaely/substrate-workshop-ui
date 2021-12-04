@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react'
 import { useSpring, animated } from 'react-spring'
 import checkHasLikedComment from '../utils/checkHasLikedComment'
 import {SiParitysubstrate} from 'react-icons/si'
+import { commentLikedId } from '../Recoil/blockListener'
 
 export default function CommentDetails(props: any) {
     const api = useRecoilValue(pol_api_dev)
@@ -21,13 +22,15 @@ export default function CommentDetails(props: any) {
     const userInfoComment = useRecoilValue(get_user_profile_image(props.comment.author))
     const [liked, setLiked] = useState(true)
     const [edit, setEdit] = useState(false)
-    
+    const id = useRecoilValue(commentLikedId)
 
     useEffect(() => {
         (async () => {
-            setLiked(await checkHasLikedComment(user.address, props.comment.commentId, api))
+            if(id === props.comment.commentId) {
+                setLiked(await checkHasLikedComment(user.address, props.comment.commentId, api))
+            }
         })()
-    },[props.comment])
+    },[props.comment, id])
 
     async function likeComment(commentId: number, commentAuthor: any, postId: number, author: any) {
         try {

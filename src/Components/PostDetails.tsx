@@ -17,7 +17,7 @@ export default function PostDetails(props: any) {
     const [showComments, setShowComments] = useState(false)
     const api = useRecoilValue(pol_api_dev)
     const [liked, setLiked] = useState(false)
-    
+    const [updateComments, setUpdateComments] = useState(false)  
 
     useEffect(() => {
         (async() => {
@@ -109,8 +109,10 @@ export default function PostDetails(props: any) {
             {showComments &&
                 <PostComments 
                 postId={props.post.id} 
-                postAuthor={props.post.author} 
-                comments={props.post.comments}
+                postAuthor={props.post.author}
+                totalComments={props.post.totalComments}
+                update={updateComments}
+                setUpdate={setUpdateComments}
                 />
             }
         </Box>

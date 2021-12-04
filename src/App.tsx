@@ -38,6 +38,7 @@ function App() {
   useSubstrateEventListener()
 
   const view: string = useRecoilValue(currentView)
+  
 
   const transition = useTransition(view, {
     from: {opacity: 0, scale: 0},

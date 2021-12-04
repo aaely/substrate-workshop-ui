@@ -9,8 +9,11 @@ import {
     updateCommentsPostFeed,
     updatePostUnliked,
     updatePostLiked,
-    updateCommentLiked,
-    updateCommentUnliked,
+    BTCPrice,
+    ATOMPrice,
+    DOTPrice,
+    ETHPrice,
+    commentLikedId,
 } from '../Recoil/blockListener'
 
 const FILTERED_EVENTS = [
@@ -24,6 +27,10 @@ const TRACKED_EVENTS = [
     'socialMedia:PostUnliked::',
     'socialMedia:CommentLiked::',
     'socialMedia:CommentUnliked::',
+    'ocw:BTCPrice::',
+    'ocw:ETHPrice::',
+    'ocw:DOTPrice::',
+    'ocw:ATOMPrice::',
 ]
 
 export default function useSubstrateEventListener() {
@@ -34,8 +41,11 @@ export default function useSubstrateEventListener() {
     const updateComments = useSetRecoilState(updateCommentsPostFeed)
     const likedPost = useSetRecoilState(updatePostLiked)
     const unlikedPost = useSetRecoilState(updatePostUnliked)
-    const likedComment = useSetRecoilState(updateCommentLiked)
-    const unlikedComment = useSetRecoilState(updateCommentUnliked)
+    const setId = useSetRecoilState(commentLikedId)
+    const setBtc = useSetRecoilState(BTCPrice)
+    const setEth = useSetRecoilState(ETHPrice)
+    const setDot = useSetRecoilState(DOTPrice)
+    const setAtom = useSetRecoilState(ATOMPrice)
     useEffect(() => {
         let unsub: any = null
         if(feed.length > 1000) {
@@ -47,18 +57,12 @@ export default function useSubstrateEventListener() {
                         const { event }: any = record
                         const types = event.typeDef
                         const eventName = `${event.section}:${event.method}::`
+                        console.log(eventName)
                         if (FILTERED_EVENTS.includes(eventName)) return
                         switch (eventName) {
                             case TRACKED_EVENTS[0]: {
                                 let newPost = event['data'][0].toHuman()
-                                const index = posts.findIndex((x: any) => x.id === newPost.id)
-                                if(index < 0){
-                                    setPosts([...posts, newPost])
-                                    return
-                                }
-                                if(index >= 0) {
-                                    return
-                                }
+                                setPosts([...posts, newPost])
                                 break;
                             }
                             case TRACKED_EVENTS[1]: {
@@ -81,7 +85,7 @@ export default function useSubstrateEventListener() {
                                     postId: event['data'][0].toHuman(),
                                     commentId: event['data'][1].toHuman(),
                                 }
-                                likedComment(payload)
+                                setId(payload.commentId)
                                 break;
                             }
                             case TRACKED_EVENTS[5]: {
@@ -89,7 +93,23 @@ export default function useSubstrateEventListener() {
                                     postId: event['data'][0].toHuman(),
                                     commentId: event['data'][1].toHuman(),
                                 }
-                                unlikedComment(payload)
+                                setId(payload.commentId)
+                                break;
+                            }
+                            case TRACKED_EVENTS[6]: {
+                                setBtc(event['data'][0].toHuman())
+                                break;
+                            }
+                            case TRACKED_EVENTS[7]: {
+                                setEth(event['data'][0].toHuman())
+                                break;
+                            }
+                            case TRACKED_EVENTS[8]: {
+                                setDot(event['data'][0].toHuman())
+                                break;
+                            }
+                            case TRACKED_EVENTS[9]: {
+                                setAtom(event['data'][0].toHuman())
                                 break;
                             }
                             default: break;

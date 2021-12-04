@@ -1,11 +1,14 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import { atom, selector, selectorFamily } from 'recoil'
 import { recoilPersist } from 'recoil-persist';
+//import { Detector } from '@substrate/connect'
+//import SubsListSpec from '../chain_spec/SubsListSpec.json'
 import types from '../types/types.json'
 import jsonrpc from '@polkadot/types/interfaces/jsonrpc';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import keyring from '@polkadot/ui-keyring';
 import { v5 } from 'uuid'
+
 
 const { persistAtom } = recoilPersist({
     key: 'recoil-persist',
@@ -29,6 +32,19 @@ export const accounts = atom({
     effects_UNSTABLE: [persistAtom]
 })
 
+export const pol_api_wnd = selector({
+    key: 'pol_api_wnd',
+    get: async () => {
+        try {
+            const prov = new WsProvider('wss://westend-rpc.polkadot.io')
+            const res = await ApiPromise.create({provider: prov, types, rpc: jsonrpc})
+            return res
+        } catch(error) {
+            console.log(error)
+        }
+    }
+})
+
 export const pol_api = selector({
     key: 'pol_api',
     get: async ({get}) => {
@@ -38,7 +54,6 @@ export const pol_api = selector({
             return res
         } catch (error) {
             console.log(error)
-            window.open('https://polkadot.js.org/extension/', '_blank')
         }
     }
 })
@@ -52,10 +67,23 @@ export const pol_api_dev = selector({
             return res
         } catch (error) {
             console.log(error)
-            window.open('https://polkadot.js.org/extension/', '_blank')
         }
     }
 })
+
+/*export const substrate_connect = selector({
+    key: 'substrate_connect',
+    get: async () => {
+        try {
+            const app = new Detector('burnr-wallet')
+            console.log(app)
+            const chain = await app.connect('rococo');
+            return chain
+        } catch(error) {
+            console.log(error)
+        }
+    }
+})*/
 
 export const get_pol_accts = selector({
     key: 'get_pol_accts',
@@ -528,3 +556,7 @@ export const commentsLoading = atom({
     key: 'commentsLoading',
     default: true
 })
+
+function customSpecs(customSpecs: any) {
+    throw new Error('Function not implemented.');
+}

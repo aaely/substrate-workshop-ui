@@ -16,6 +16,7 @@ import {
 import {MdPostAdd} from 'react-icons/md'
 import CommentDetails from './CommentDetails'
 import { web3FromSource } from '@polkadot/extension-dapp'
+import getComments from '../utils/getComments'
 
 export default function PostComments(props: any) {
 
@@ -24,18 +25,19 @@ export default function PostComments(props: any) {
     const [cmt, setCmt] = useState('')
     const setLoading = useSetRecoilState(commentsLoading)
     const commentRef: MutableRefObject<any> = useRef(null)
-    //const [comments, setComments] = useState([])
+    const [comments, setComments] = useState([])
 
     useEffect(() => {
-        commentRef.current?.focus()
-    },[])
+        (async () => {
+            const c: any = await getComments(props.postId, props.totalComments, api)
+            setComments(c)
+        })()
+    },[props.totalComments])
 
     const addComment = async (postId: number, comment: string, author: any) => {
         try {
             const injected = await web3FromSource('polkadot-js')
-            const unsub: any = await api?.tx['socialMedia']['newComment']
-              (postId, comment, author, new Date(Date.now()).toLocaleString()).
-              signAndSend(acct, {signer: injected.signer}, (result: any) => {
+            const unsub: any = await api?.tx['socialMedia']['newComment'](postId, comment, author, new Date(Date.now()).toLocaleString()).signAndSend(acct, {signer: injected.signer}, (result: any) => {
                 console.log(`Current status is ${result.status}`);
                 if (result.status.isInBlock) {
                   console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
@@ -63,7 +65,7 @@ export default function PostComments(props: any) {
 
     return(
         <Box>
-            {props.comments?.map((comment: any, i: number) => {
+            {comments?.map((comment: any, i: number) => {
                 return(
                     <div className='commentsContainer' key={i}>
                         <CommentDetails
