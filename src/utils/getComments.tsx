@@ -4,7 +4,10 @@ export default async function getComments(postId: number, totalComments: number,
         let comments = []
         for(let i = 0; i <= totalComments; i++){
             const res = await api.query['socialMedia']['postCommentByCount'](postId, i)
-            comments.push(res.toHuman())
+            const comment = res.toHuman()
+            if (comment.content.length > 0) {
+                comments.push(res.toHuman())
+            }
         }
         return comments
     } catch (error) {

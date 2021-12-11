@@ -72,21 +72,28 @@ export default function UserRegistration() {
     }
 
     useUpdateEffect(() => {
-        if(!handleRef.current?.focus()){
-            handleRef.current?.focus()
-        }
         (async () => {
             try {
-                const availableHandle = await checkHandleAvailability(currentHandleId, api)
                 const availableEmail = await checkEmailAvailability(currentEmailId, api)
-                setIsHandleAvailable(availableHandle)
                 setIsEmailAvailable(availableEmail)
                 handleRef.current?.focus()
             } catch(error) {
                 console.log(error)
             }
         })()
-    },[currentHandleId, currentEmailId])
+    },[currentEmailId])
+
+    useUpdateEffect(() => {
+        (async () => {
+            try {
+                const availableHandle = await checkHandleAvailability(currentHandleId, api)
+                setIsHandleAvailable(availableHandle)
+                handleRef.current?.focus()
+            } catch(error) {
+                console.log(error)
+            }
+        })()
+    },[currentHandleId])
 
     const handleChange = ({target: {id, value, files}}) => {
         switch(id) {

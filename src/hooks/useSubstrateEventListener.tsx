@@ -58,7 +58,7 @@ export default function useSubstrateEventListener() {
                         const types = event.typeDef
                         const eventName = `${event.section}:${event.method}::`
                         console.log(eventName)
-                        if (FILTERED_EVENTS.includes(eventName)) return
+                        //if (FILTERED_EVENTS.includes(eventName)) return
                         switch (eventName) {
                             case TRACKED_EVENTS[0]: {
                                 let newPost = event['data'][0].toHuman()

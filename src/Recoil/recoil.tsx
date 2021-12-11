@@ -62,7 +62,7 @@ export const pol_api_dev = selector({
     key: 'pol_api',
     get: async ({get}) => {
         try {
-            const prov = new WsProvider('ws://127.0.0.1:9944')
+            const prov = new WsProvider('ws://localhost:9944')
             const res = await ApiPromise.create({provider: prov, types, rpc: jsonrpc})
             return res
         } catch (error) {

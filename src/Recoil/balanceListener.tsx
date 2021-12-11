@@ -23,9 +23,3 @@ export const user = atom({
     default: [],
     effects_UNSTABLE: [persistAtom]
 })
-
-export const posts = atom({
-    key: 'posts',
-    default: [],
-    effects_UNSTABLE: [persistAtom]
-})

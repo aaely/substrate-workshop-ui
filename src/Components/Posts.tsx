@@ -1,7 +1,7 @@
 import { Box } from '@mui/material'
 import { useRecoilValue, useRecoilState } from 'recoil'
-import { posts as p, user as u } from '../Recoil/balanceListener'
-import { postFeed, currentFeed } from '../Recoil/blockListener'
+import { user as u } from '../Recoil/balanceListener'
+import { posts as p, postFeed, currentFeed, BTCPrice } from '../Recoil/blockListener'
 import './app.css'
 import Deck from './Deck'
 import PostDetails from '../Components/PostDetails'
@@ -20,6 +20,8 @@ export default function Posts() {
         enter: {scale: 1, opacity: 1},
         leave: {scale: 0, opacity: 0},
     })
+    const btc = useRecoilValue(BTCPrice)
+    console.log(btc)
     
     return(
         <>

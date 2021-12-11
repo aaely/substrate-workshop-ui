@@ -36,6 +36,13 @@ export const postFeed = atom({
     effects_UNSTABLE: [persistAtom]
 })
 
+export const posts = atom({
+    key: 'posts',
+    default: [],
+    dangerouslyAllowMutability: true,
+    effects_UNSTABLE: [persistAtom]
+})
+
 export const updateCommentsPostFeed = selector({
     key: 'updateCommentsPostFeed',
     get: () => {},
@@ -58,11 +65,16 @@ export const updatePostLiked = selector({
     key: 'updatePostLiked',
     get: () => {},
     set: ({get, set}, postId: any) => {
-        let posts = [...get(postFeed)]
-        let index = posts.findIndex((x: any) => x.id == postId)
-        if(index === -1) return
-        posts[index].likes = parseInt(posts[index].likes) + 1
-        set(postFeed, [...posts])
+        let currentPosts = [...get(postFeed)]
+        let myPosts = [...get(posts)]
+        let index1 = currentPosts.findIndex((x: any) => x.id == postId)
+        let index2 = myPosts.findIndex((x: any) => x.id == postId)
+        if(index1 === -1) return
+        if(index2 === -1) return
+        currentPosts[index1].likes = parseInt(currentPosts[index1].likes) + 1
+        myPosts[index2].likes = parseInt(myPosts[index2].likes) + 1
+        set(postFeed, [...currentPosts])
+        set(posts, [...myPosts])
     },
     cachePolicy_UNSTABLE: {
         // Only store the most recent set of dependencies and their values
@@ -74,11 +86,16 @@ export const updatePostUnliked = selector({
     key: 'updatePostUnliked',
     get: () => {},
     set: ({get, set}, postId: any) => {
-        let posts = [...get(postFeed)]
-        let index = posts.findIndex((x: any) => x.id == postId)
-        if(index === -1) return
-        posts[index].likes = parseInt(posts[index].likes) - 1
-        set(postFeed, [...posts])
+        let currentPosts = [...get(postFeed)]
+        let myPosts = [...get(posts)]
+        let index1 = currentPosts.findIndex((x: any) => x.id == postId)
+        let index2 = myPosts.findIndex((x: any) => x.id == postId)
+        if(index1 === -1) return
+        if(index2 === -1) return
+        currentPosts[index1].likes = parseInt(currentPosts[index1].likes) - 1
+        myPosts[index2].likes = parseInt(myPosts[index2].likes) - 1
+        set(postFeed, [...currentPosts])
+        set(posts, [...myPosts])
     },
     cachePolicy_UNSTABLE: {
         // Only store the most recent set of dependencies and their values
