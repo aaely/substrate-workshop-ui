@@ -29,8 +29,10 @@ export default function PostComments(props: any) {
 
     useEffect(() => {
         (async () => {
-            const c: any = await getComments(props.postId, props.totalComments, api)
-            setComments(c)
+            if(props.totalComments > 0) {
+                const c: any = await getComments(props.postId, props.totalComments, api)
+                setComments(c)
+            }    
         })()
     },[props.totalComments])
 

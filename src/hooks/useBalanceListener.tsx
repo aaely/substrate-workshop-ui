@@ -2,7 +2,7 @@ import { useRecoilValue, useSetRecoilState, useRecoilState } from 'recoil'
 import { useEffect } from 'react'
 import { account, balance, user as u } from '../Recoil/balanceListener'
 import { get_pol_acct, pol_api_dev, accounts, get_pol_accts } from '../Recoil/recoil'
-import { blockNumber, posts } from '../Recoil/blockListener'
+import { blockNumber, myPosts } from '../Recoil/blockListener'
 import getBalance from '../utils/getBalance'
 import getUser from '../utils/getUser'
 import getPosts from '../utils/getPosts'
@@ -18,7 +18,7 @@ const useBalanceListener = () => {
     const api = useRecoilValue(pol_api_dev)
     const [user, updateUser] = useRecoilState(u)
     const setAccounts = useSetRecoilState(accounts)
-    const setPosts = useSetRecoilState(posts)
+    const setPosts = useSetRecoilState(myPosts)
 
     useEffect(() => {
         (async () => {

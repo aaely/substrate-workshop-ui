@@ -2,8 +2,6 @@ import { useEffect } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { pol_api_dev } from '../Recoil/recoil'
 import { 
-    blockNumber as b, 
-    finalizedBlockNumber as f, 
     eventFeed as e,
     postFeed,
     updateCommentsPostFeed,
@@ -57,8 +55,7 @@ export default function useSubstrateEventListener() {
                         const { event }: any = record
                         const types = event.typeDef
                         const eventName = `${event.section}:${event.method}::`
-                        console.log(eventName)
-                        //if (FILTERED_EVENTS.includes(eventName)) return
+                        if (FILTERED_EVENTS.includes(eventName)) return
                         switch (eventName) {
                             case TRACKED_EVENTS[0]: {
                                 let newPost = event['data'][0].toHuman()

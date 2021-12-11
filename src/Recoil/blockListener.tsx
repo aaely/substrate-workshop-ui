@@ -36,8 +36,8 @@ export const postFeed = atom({
     effects_UNSTABLE: [persistAtom]
 })
 
-export const posts = atom({
-    key: 'posts',
+export const myPosts = atom({
+    key: 'myPosts',
     default: [],
     dangerouslyAllowMutability: true,
     effects_UNSTABLE: [persistAtom]
@@ -66,15 +66,15 @@ export const updatePostLiked = selector({
     get: () => {},
     set: ({get, set}, postId: any) => {
         let currentPosts = [...get(postFeed)]
-        let myPosts = [...get(posts)]
+        let posts = [...get(myPosts)]
         let index1 = currentPosts.findIndex((x: any) => x.id == postId)
-        let index2 = myPosts.findIndex((x: any) => x.id == postId)
+        let index2 = posts.findIndex((x: any) => x.id == postId)
         if(index1 === -1) return
         if(index2 === -1) return
         currentPosts[index1].likes = parseInt(currentPosts[index1].likes) + 1
-        myPosts[index2].likes = parseInt(myPosts[index2].likes) + 1
+        posts[index2].likes = parseInt(posts[index2].likes) + 1
         set(postFeed, [...currentPosts])
-        set(posts, [...myPosts])
+        set(myPosts, [...posts])
     },
     cachePolicy_UNSTABLE: {
         // Only store the most recent set of dependencies and their values
@@ -87,15 +87,15 @@ export const updatePostUnliked = selector({
     get: () => {},
     set: ({get, set}, postId: any) => {
         let currentPosts = [...get(postFeed)]
-        let myPosts = [...get(posts)]
+        let posts = [...get(myPosts)]
         let index1 = currentPosts.findIndex((x: any) => x.id == postId)
-        let index2 = myPosts.findIndex((x: any) => x.id == postId)
+        let index2 = posts.findIndex((x: any) => x.id == postId)
         if(index1 === -1) return
         if(index2 === -1) return
         currentPosts[index1].likes = parseInt(currentPosts[index1].likes) - 1
-        myPosts[index2].likes = parseInt(myPosts[index2].likes) - 1
+        posts[index2].likes = parseInt(posts[index2].likes) - 1
         set(postFeed, [...currentPosts])
-        set(posts, [...myPosts])
+        set(myPosts, [...posts])
     },
     cachePolicy_UNSTABLE: {
         // Only store the most recent set of dependencies and their values

@@ -75,8 +75,8 @@ export default function UserRegistration() {
         (async () => {
             try {
                 const availableEmail = await checkEmailAvailability(currentEmailId, api)
-                setIsEmailAvailable(availableEmail)
-                handleRef.current?.focus()
+                setIsEmailAvailable(!availableEmail)
+                emailRef.current?.focus()
             } catch(error) {
                 console.log(error)
             }
@@ -87,7 +87,7 @@ export default function UserRegistration() {
         (async () => {
             try {
                 const availableHandle = await checkHandleAvailability(currentHandleId, api)
-                setIsHandleAvailable(availableHandle)
+                setIsHandleAvailable(!availableHandle)
                 handleRef.current?.focus()
             } catch(error) {
                 console.log(error)
@@ -155,7 +155,6 @@ export default function UserRegistration() {
         try{
             const injected = await web3FromSource('polkadot-js')
             const imageHash = await saveImage()
-            console.log(acct)
             const unsub = await api?.tx['users']['newUser'](fname, lname, phone, email, currentEmailId, handle, currentHandleId, bio, website, imageHash).signAndSend(acct, {signer: injected.signer}, (result) => {
                 console.log(`Current status is ${result.status}`);
             
@@ -233,8 +232,8 @@ export default function UserRegistration() {
           }
           />
           {isEmailAvailable ? 
-            <FormHelperText style={{color: 'red'}} id="component-error-text">Email already in use</FormHelperText> : 
-            <FormHelperText style={{color: 'green'}} id="component-error-text">Email is available!</FormHelperText>
+            <FormHelperText style={{color: 'green'}} id="component-error-text">Email is available!</FormHelperText> :
+            <FormHelperText style={{color: 'red'}} id="component-error-text">Email already in use</FormHelperText>
           }
         </FormControl>
         <FormControl sx={{ m: 1, width: '25ch' }} variant="standard">
@@ -252,12 +251,12 @@ export default function UserRegistration() {
           }
           />
           {isHandleAvailable ? 
-          <FormHelperText style={{color: 'red'}} id="component-error-text">
-              Handle already in use
-          </FormHelperText>
-          : 
           <FormHelperText style={{color: 'green'}} id="component-error-text">
               Handle is available!
+          </FormHelperText>
+          : 
+          <FormHelperText style={{color: 'red'}} id="component-error-text">
+              Handle already in use
           </FormHelperText>
           }
         </FormControl>
