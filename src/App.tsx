@@ -16,6 +16,7 @@ import Checkout from './Pages/Checkout';
 import Orders from './Pages/Orders';
 import { useRecoilValue } from 'recoil';
 import useSubstrateEventListener from './hooks/useSubstrateEventListener'
+import { initCosmos, getBalance } from './Recoil/cosmos';
 
 const hashMap = new Map([
   ['aminoBuilder', <AminoBuilder/>],
@@ -38,7 +39,6 @@ function App() {
   useSubstrateEventListener()
 
   const view: string = useRecoilValue(currentView)
-  
 
   const transition = useTransition(view, {
     from: {opacity: 0, scale: 0},

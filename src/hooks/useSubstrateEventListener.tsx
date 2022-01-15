@@ -12,6 +12,7 @@ import {
     DOTPrice,
     ETHPrice,
     commentLikedId,
+    newPost,
 } from '../Recoil/blockListener'
 
 const FILTERED_EVENTS = [
@@ -44,6 +45,7 @@ export default function useSubstrateEventListener() {
     const setEth = useSetRecoilState(ETHPrice)
     const setDot = useSetRecoilState(DOTPrice)
     const setAtom = useSetRecoilState(ATOMPrice)
+    const setPost = useSetRecoilState(newPost)
     useEffect(() => {
         let unsub: any = null
         if(feed.length > 1000) {
@@ -59,7 +61,7 @@ export default function useSubstrateEventListener() {
                         switch (eventName) {
                             case TRACKED_EVENTS[0]: {
                                 let newPost = event['data'][0].toHuman()
-                                setPosts([...posts, newPost])
+                                setPost(newPost)
                                 break;
                             }
                             case TRACKED_EVENTS[1]: {

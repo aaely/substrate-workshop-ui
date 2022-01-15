@@ -43,6 +43,15 @@ export const myPosts = atom({
     effects_UNSTABLE: [persistAtom]
 })
 
+export const newPost = selector({
+    key: 'newPost',
+    get: () => {},
+    set: ({get, set}, post: any) => {
+        let posts = [...get(postFeed)]
+        set(postFeed, [...posts, post])
+    }
+})
+
 export const updateCommentsPostFeed = selector({
     key: 'updateCommentsPostFeed',
     get: () => {},

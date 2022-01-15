@@ -9,8 +9,6 @@ export default function Account() {
     const user = useRecoilValue(u)
     const setView = useSetRecoilState(currentView)
 
-    console.log(user)
-
     return(
         <Box className='container'>
             <h1>My Account</h1>

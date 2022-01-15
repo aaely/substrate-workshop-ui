@@ -64,6 +64,7 @@ export const pol_api_dev = selector({
         try {
             const prov = new WsProvider('ws://localhost:9944')
             const res = await ApiPromise.create({provider: prov, types, rpc: jsonrpc})
+            console.log(res)
             return res
         } catch (error) {
             console.log(error)
