@@ -19,10 +19,10 @@ export const total = selector({
         const c: any = get(cart)
         let total = 0
         for(let i = 0; i < c.length; i++) {
-            total = total + c[i].price*c[i].quantity
+            total = total + parseInt(c[i].price) * c[i].quantity
             console.log(total, c[i])
         }
-        return total / 100
+        return total
     }
 })
 

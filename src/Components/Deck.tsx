@@ -59,7 +59,7 @@ export default function Deck(deck: any) {
             {...bind(i)}
             style={{
               transform: interpolate([rot, scale], trans),
-              backgroundImage: `url(https://ipfs.io/ipfs/${deck.images[i]})`,
+              backgroundImage: `url(https://infura.ipfs.io/ipfs/${deck.images[i]})`,
             }}
           />
         </animated.div>

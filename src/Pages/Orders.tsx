@@ -59,10 +59,10 @@ export default function Orders() {
                             </StyledTableCell>
                             <StyledTableCell align="center">{order.products.map((product: any, i: number) => {
                                 return(
-                                    <p key={i}>{product[0]} | ${product[1]/100} | x{product[2]} </p>
+                                    <p key={i}>{product[0]} | ${parseInt(product[1])} | x{product[2]} </p>
                                 )
                             })}</StyledTableCell>
-                            <StyledTableCell align="center">${order.total/100}</StyledTableCell>
+                            <StyledTableCell align="center">${parseInt(order.total)}</StyledTableCell>
                             <StyledTableCell align="center">{order.date.toLocaleString()}</StyledTableCell>
                             <StyledTableCell align="center">{order.id}</StyledTableCell>
                         </StyledTableRow>

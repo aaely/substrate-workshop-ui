@@ -86,7 +86,7 @@ export default function Checkout() {
                         <StyledTableCell align='center' component="th" scope="row">
                             {row.name}
                         </StyledTableCell>
-                        <StyledTableCell align="center">${row.price/100}</StyledTableCell>
+                        <StyledTableCell align="center">${parseInt(row.price)}</StyledTableCell>
                         <StyledTableCell align="center">{row.quantity}</StyledTableCell>
                         <StyledTableCell align="center">{row.id}</StyledTableCell>
                         </StyledTableRow>

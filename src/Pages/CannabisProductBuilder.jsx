@@ -51,8 +51,8 @@ export default function CannabisProductBuilder() {
         try {
             const injected = await web3FromSource('polkadot-js')
             const id = v5(name, NAMESPACE)
-            const imageHash = await saveImage()
-            await api?.tx['cannabis']['newCannabisProduct'](parseInt(id, 16), name, price, cat, inv, imageHash, formattedCannabinoids, formattedTerpenes).signAndSend(acct, {signer: injected.signer})
+            //const imageHash = await saveImage()
+            await api?.tx['cannabis']['newCannabisProduct'](parseInt(id, 16), name, price, cat, inv, '', formattedCannabinoids, formattedTerpenes).signAndSend(acct, {signer: injected.signer})
             forceUpdate(Math.random())
             setCanns([])
             setTerps([])

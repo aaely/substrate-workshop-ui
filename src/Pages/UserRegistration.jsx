@@ -154,8 +154,8 @@ export default function UserRegistration() {
     const createUser = async () => {
         try{
             const injected = await web3FromSource('polkadot-js')
-            const imageHash = await saveImage()
-            const unsub = await api?.tx['users']['newUser'](fname, lname, phone, email, currentEmailId, handle, currentHandleId, bio, website, imageHash).signAndSend(acct, {signer: injected.signer}, (result) => {
+            //const imageHash = await saveImage()
+            const unsub = await api?.tx['users']['newUser'](fname, lname, phone, email, currentEmailId, handle, currentHandleId, bio, website, '').signAndSend(acct, {signer: injected.signer}, (result) => {
                 console.log(`Current status is ${result.status}`);
             
                 if (result.status.isInBlock) {

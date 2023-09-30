@@ -73,7 +73,7 @@ export default function PeptideBuilder() {
         setChain(newChain)
     }
 
-    const uploadImage = async () => {
+    /*const uploadImage = async () => {
         try {
             const imageHash = await ipfs.add(buffer)
             console.log(imageHash)
@@ -81,14 +81,14 @@ export default function PeptideBuilder() {
         } catch(error) {
             console.log(error)
         }
-    }
+    }*/
 
     const createPeptide = async () => {
         try {
             const injected = await web3FromSource('polkadot-js')
             const id = v5(name, NAMESPACE)
-            const imageHash = await uploadImage()
-            await api?.tx['peptides']['createPeptide'](name, parseInt(id, 16), price, inv, imageHash.path, chain).signAndSend(acct, {signer: injected.signer})
+            //const imageHash = await uploadImage()
+            await api?.tx['peptides']['createPeptide'](name, parseInt(id, 16), price, inv, '', chain).signAndSend(acct, {signer: injected.signer})
             forceUpdate(Math.random())
             setBuffer([])
             setChain([])
